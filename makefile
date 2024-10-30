@@ -2,8 +2,10 @@ dcup-infra:
 	- docker-compose -p autopilot-drone-infra -f infrastructure/db/docker-compose.yaml -f infrastructure/mqtt/docker-compose.yaml up
 
 dcup-dev:
+	- docker-compose -f docker-compose.yaml up
 
 dcup-prod:
+	- docker-compose -f docker-compose.prod.yaml up
 
 dc-nuclear:
 	- docker stop $$(docker ps -a -q)
