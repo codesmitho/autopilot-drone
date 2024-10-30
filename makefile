@@ -1,5 +1,5 @@
 dcup-infra:
-	- docker-compose -p autopilot-drone-infra -f infrastructure/db/docker-compose.yaml -f infrastructure/mqtt/docker-compose.yaml up
+	- docker-compose -p autopilot-drone-infra -f infrastructure/database/docker-compose.yaml -f infrastructure/mqtt/docker-compose.yaml up
 
 dcup-dev:
 	- docker-compose -f docker-compose.yaml up
