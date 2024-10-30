@@ -5,7 +5,7 @@ services:
     container_name: autopilot-drone-webservice
     build:
       context: ./backend
-      dockerfile: dev.Dockerfile
+      dockerfile: Dockerfile
     env_file:
       - .env
       - .env.local
@@ -18,7 +18,7 @@ services:
     container_name: autopilot-drone-frontend
     build:
       context: ./frontend
-      dockerfile: dev.Dockerfile
+      dockerfile: Dockerfile
     env_file:
       - .env
       - .env.local
