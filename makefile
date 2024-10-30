@@ -1,0 +1,13 @@
+dcup-infra:
+	- docker-compose -p autopilot-drone-infra -f infrastructure/db/docker-compose.yaml -f infrastructure/mqtt/docker-compose.yaml up
+
+dcup-dev:
+
+dcup-prod:
+
+dc-nuclear:
+	- docker stop $$(docker ps -a -q)
+	- docker kill $$(docker ps -q)
+	- docker rm $$(docker ps -a -q)
+	- docker rmi $$(docker images -q)
+	- docker system prune --all --force --volumes
