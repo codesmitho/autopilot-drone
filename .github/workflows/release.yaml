@@ -1,0 +1,87 @@
+name: Build, Push Docker Images, and Deploy to Kubernetes
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch: 
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Extract and Validate Release Version
+      - name: Extract Release Version
+        id: version
+        run: |
+          TAG=${GITHUB_REF_NAME}
+
+          if [[ "$TAG" =~ ^v[0-9]+(\.[0-9]+)*$ ]]; then
+            VERSION=${TAG#v}
+          elif [[ "$TAG" =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
+            VERSION=$TAG
+          else
+            echo "Error: Invalid release tag format: $TAG"
+            exit 1
+          fi
+
+          if [[ -z "$VERSION" || "$VERSION" =~ ^\. ]]; then
+            echo "Error: Extracted version is invalid: $VERSION"
+            exit 1
+          fi
+
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
+      # Step 3: Debug Release Version
+      - name: Debug Release Version
+        run: echo "Extracted version is ${{ env.VERSION }}"
+
+      # Step 4: Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+
+      # Step 5: Build and Push Backend Docker Image
+      - name: Build and Push Backend Image
+        run: |
+          docker build -f ./backend/dev.Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-webservice:${{ env.VERSION }} ./backend
+          docker push ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-webservice:${{ env.VERSION }}
+
+      # Step 6: Build and Push Frontend Docker Image
+      - name: Build and Push Frontend Image
+        run: |
+          docker build -f ./frontend/dev.Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-frontend:${{ env.VERSION }} ./frontend
+          docker push ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-frontend:${{ env.VERSION }}
+
+      # Optional: List Built Images for Debugging
+      - name: List Built Images
+        run: docker images
+
+      # Step 7: Set up kubectl (using kubeconfig secret)
+      - name: Set up kubectl using kubeconfig secret
+        run: |
+          mkdir -p $HOME/.kube  # Create the .kube directory if it doesn't exist
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
+
+      # Optional: Verify kubectl is working
+      - name: Verify kubectl is working
+        run: |
+          kubectl cluster-info
+
+      # Step 8: Deploy Backend to Kubernetes (specify the namespace)
+      - name: Deploy Backend to Kubernetes
+        run: |
+          kubectl set image deployment/autopilot-drone-webservice autopilot-drone-webservice=${{ secrets.DOCKER_USERNAME }}/autopilot-drone-webservice:${{ env.VERSION }} -n autopilot-drone
+          kubectl rollout status deployment/autopilot-drone-webservice -n autopilot-drone
+
+      # Step 9: Deploy Frontend to Kubernetes (specify the namespace)
+      - name: Deploy Frontend to Kubernetes
+        run: |
+          kubectl set image deployment/autopilot-drone-frontend autopilot-drone-frontend=${{ secrets.DOCKER_USERNAME }}/autopilot-drone-frontend:${{ env.VERSION }} -n autopilot-drone
+          kubectl rollout status deployment/autopilot-drone-frontend -n autopilot-drone

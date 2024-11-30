@@ -1,0 +1,39 @@
+version: "3.2"
+services:
+  mongodb:
+    container_name: mongodb
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    env_file:
+      - ../../../.env
+    networks:
+      - shared_net
+    volumes:
+      - ../../temp/mongo/data/mongo_primary:/data/db
+      - ../../temp/mongo/keyfile:/data/keyfile
+    entrypoint:
+      [
+        "/bin/bash",
+        "-c",
+        "chmod 400 /data/keyfile && mongod --keyFile /data/keyfile --bind_ip_all",
+      ]
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    env_file:
+      - ../../../.env
+    networks:
+      - shared_net
+    volumes:
+      - ../../temp/redis/data/redis:/data
+      - ../../temp/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+
+networks:
+  shared_net:
+    driver: bridge
