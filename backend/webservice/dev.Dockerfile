@@ -1,6 +1,6 @@
 FROM golang:latest
 
-WORKDIR /build/backend
+WORKDIR /build/backend/webservice
 
 COPY go.mod go.sum .air.toml ./
 RUN go mod download
@@ -10,7 +10,7 @@ RUN curl -fLo install.sh https://raw.githubusercontent.com/cosmtrek/air/master/i
 
 RUN go mod tidy
 
-WORKDIR /build/backend
+WORKDIR /build/backend/webservice
 
 CMD air -d
 

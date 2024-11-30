@@ -2,7 +2,7 @@
 FROM golang:1-alpine as builder
 
 # Set the working directory for the build
-WORKDIR /build/backend
+WORKDIR /build/backend/webservice
 
 # Install build dependencies in a single layer
 RUN apk update && apk add --no-cache ca-certificates curl build-base libtool musl-dev git \
