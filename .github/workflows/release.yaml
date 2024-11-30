@@ -50,13 +50,13 @@ jobs:
       # Step 5: Build and Push Web Service Backend Docker Image
       - name: Build and Push Backend Image
         run: |
-          docker build -f ./backend/webservice/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-backend-webservice:${{ env.VERSION }} ./backend
+          docker build -f ./backend/webservice/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-backend-webservice:${{ env.VERSION }} ./backend/webservice
           docker push ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-backend-webservice:${{ env.VERSION }}
 
       # Step 6: Build and Push Dashboard Frontend Docker Image
       - name: Build and Push Frontend Image
         run: |
-          docker build -f ./frontend/dashboard/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-frontend-dashboard:${{ env.VERSION }} ./frontend
+          docker build -f ./frontend/dashboard/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-frontend-dashboard:${{ env.VERSION }} ./frontend/dashboard
           docker push ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-frontend-dashboard:${{ env.VERSION }}
 
       # Optional: List Built Images for Debugging
