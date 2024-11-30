@@ -47,17 +47,17 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
-      # Step 5: Build and Push Backend Docker Image
+      # Step 5: Build and Push Web Service Backend Docker Image
       - name: Build and Push Backend Image
         run: |
-          docker build -f ./backend/dev.Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-webservice:${{ env.VERSION }} ./backend
-          docker push ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-webservice:${{ env.VERSION }}
+          docker build -f ./backend/dev.Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-backend-webservice:${{ env.VERSION }} ./backend
+          docker push ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-backend-webservice:${{ env.VERSION }}
 
-      # Step 6: Build and Push Frontend Docker Image
+      # Step 6: Build and Push Dashboard Frontend Docker Image
       - name: Build and Push Frontend Image
         run: |
-          docker build -f ./frontend/dev.Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-frontend:${{ env.VERSION }} ./frontend
-          docker push ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-frontend:${{ env.VERSION }}
+          docker build -f ./frontend/dev.Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-frontend-dashboard:${{ env.VERSION }} ./frontend
+          docker push ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-frontend-dashboard:${{ env.VERSION }}
 
       # Optional: List Built Images for Debugging
       - name: List Built Images
@@ -74,14 +74,14 @@ jobs:
         run: |
           kubectl cluster-info
 
-      # Step 8: Deploy Backend to Kubernetes (specify the namespace)
+      # Step 8: Deploy Web Service Backend to Kubernetes (specify the namespace)
       - name: Deploy Backend to Kubernetes
         run: |
-          kubectl set image deployment/autopilot-drone-webservice autopilot-drone-webservice=${{ secrets.DOCKER_USERNAME }}/autopilot-drone-webservice:${{ env.VERSION }} -n autopilot-drone
-          kubectl rollout status deployment/autopilot-drone-webservice -n autopilot-drone
+          kubectl set image deployment/autopilot-drone-backend-webservice autopilot-drone-backend-webservice=${{ secrets.DOCKER_USERNAME }}/autopilot-drone-webservice:${{ env.VERSION }} -n autopilot-drone
+          kubectl rollout status deployment/autopilot-drone-backend-webservice -n autopilot-drone
 
-      # Step 9: Deploy Frontend to Kubernetes (specify the namespace)
+      # Step 9: Deploy Dashboard Frontend to Kubernetes (specify the namespace)
       - name: Deploy Frontend to Kubernetes
         run: |
-          kubectl set image deployment/autopilot-drone-frontend autopilot-drone-frontend=${{ secrets.DOCKER_USERNAME }}/autopilot-drone-frontend:${{ env.VERSION }} -n autopilot-drone
-          kubectl rollout status deployment/autopilot-drone-frontend -n autopilot-drone
+          kubectl set image deployment/autopilot-drone-frontend-dashboard autopilot-drone-frontend-dashboard=${{ secrets.DOCKER_USERNAME }}/autopilot-drone-frontend:${{ env.VERSION }} -n autopilot-drone
+          kubectl rollout status deployment/autopilot-drone-frontend-dashboard -n autopilot-drone

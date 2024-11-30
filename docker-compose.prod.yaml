@@ -1,10 +1,10 @@
 version: "3.2"
 
 services:
-  webservice:
-    container_name: autopilot-drone-webservice
+  backend-webservice:
+    container_name: autopilot-drone-backend-webservice
     build:
-      context: ./backend
+      context: ./backend/webservice
       dockerfile: Dockerfile
     env_file:
       - .env
@@ -13,10 +13,10 @@ services:
     volumes:
       - .:/build
 
-  frontend:
-    container_name: autopilot-drone-frontend
+  frontend-dashboard:
+    container_name: autopilot-drone-frontend-dashboard
     build:
-      context: ./frontend
+      context: ./frontend/dashboard
       dockerfile: Dockerfile
     env_file:
       - .env
