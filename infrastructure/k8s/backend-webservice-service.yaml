@@ -4,11 +4,10 @@ metadata:
   name: autopilot-drone-backend-webservice
   namespace: autopilot-drone
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
   - protocol: TCP
     port: 5000
     targetPort: 5000
-    nodePort: 30001
   selector:
     app: autopilot-drone-backend-webservice
