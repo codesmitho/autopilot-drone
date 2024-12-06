@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autopilot-drone-backend-webservice
+  namespace: autopilot-drone
+  labels:
+    app: autopilot-drone-backend-webservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: autopilot-drone-backend-webservice
+  template:
+    metadata:
+      labels:
+        app: autopilot-drone-backend-webservice
+    spec:
+      containers:
+        - name: autopilot-drone-backend-webservice
+          image: docker.io/kasinphatspam/autopilot-drone-backend-webservice:0.0.1
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 5000
+            name: web-port
+            protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+              scheme: HTTP
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+              scheme: HTTP
+          env:
+          - name: SERVICE_VERSION
+            value: v1
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+      imagePullSecrets:
+        - name: docker-registry
