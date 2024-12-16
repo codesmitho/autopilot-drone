@@ -13,6 +13,18 @@ services:
     volumes:
       - .:/build
 
+  frontend-home:
+    container_name: autopilot-drone-frontend-home
+    build:
+      context: ./frontend/home
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend-webservice
+
   frontend-dashboard:
     container_name: autopilot-drone-frontend-dashboard
     build:
@@ -21,6 +33,6 @@ services:
     env_file:
       - .env
     ports:
-      - "3000:3000"
+      - "3001:3001"
     depends_on:
       - backend-webservice

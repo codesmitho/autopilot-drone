@@ -12,7 +12,7 @@ RUN npm install
 COPY . .
 
 # Expose Vite's default development port
-EXPOSE 3001
+EXPOSE 3000
 
 # Command to run Vite in development mode
 CMD ["npm", "run", "dev", "--", "--host"]
