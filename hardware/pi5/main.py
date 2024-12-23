@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from torchvision.transforms import Compose, Normalize, Resize, ToTensor
 from PIL import Image
+import time
 
 # Check for GPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -30,6 +31,10 @@ midas_transforms = Compose([
 
 frame_skip = 2  # Process every 2nd frame
 frame_count = 0
+
+# FPS calculation variables
+prev_time = time.time()
+fps = 0
 
 while True:
     ret, frame = cap.read()
@@ -65,6 +70,15 @@ while True:
 
     # Apply a color map for visualization
     depth_map_visual = cv2.applyColorMap(depth_map_normalized, cv2.COLORMAP_JET)
+
+    # Calculate FPS
+    current_time = time.time()
+    fps = 1 / (current_time - prev_time)
+    prev_time = current_time
+
+    # Display FPS on the frame
+    cv2.putText(depth_map_visual, f"FPS: {fps:.2f}", (10, 30), 
+                cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
     # Display the depth map
     cv2.imshow('Depth Map', depth_map_visual)
