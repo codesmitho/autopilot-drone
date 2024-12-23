@@ -33,9 +33,9 @@ spec:
               path: /health
               port: 5000
               scheme: HTTP
-          env:
-          - name: SERVICE_VERSION
-            value: v1
+          envFrom:
+            - secretRef:
+                name: backend-webservice-secret
           resources:
             requests:
               memory: "128Mi"
