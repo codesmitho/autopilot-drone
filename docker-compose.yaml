@@ -17,13 +17,15 @@ services:
     container_name: autopilot-drone-backend-rtmp-server
     build:
       context: ./backend/rtmp-server
-      dockerfile: dev.Dockerfile
+      dockerfile: Dockerfile
     env_file:
       - .env.local
     ports:
       - "1935:1935"
+      - "80:80"
     volumes:
       - .:/build
+    restart: unless-stopped
 
   frontend-dashboard:
     container_name: autopilot-drone-frontend-dashboard

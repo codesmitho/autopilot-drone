@@ -24,6 +24,7 @@ services:
       - "1935:1935"
     volumes:
       - .:/build
+    restart: unless-stopped
 
   frontend-home:
     container_name: autopilot-drone-frontend-home
