@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  name: autopilot-drone-frontend-dashboard
+  namespace: autopilot-drone
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: dashboard.pyxieportal.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: autopilot-drone-frontend-dashboard
+            port:
+              number: 3001
+  tls:
+  - hosts:
+    - pyxieportal.com
+    secretName: letsencrypt-prod
