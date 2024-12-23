@@ -6,7 +6,8 @@ metadata:
 spec:
   type: NodePort
   ports:
-  - port: 1953
+  - protocol: TCP
+    port: 1953
     targetPort: 1953
     nodePort: 31953
   selector:

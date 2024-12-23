@@ -43,7 +43,7 @@ RUN chmod +x /app/main
 USER appuser
 
 # Expose the application port
-EXPOSE 1935
+EXPOSE 1935/tcp
 
 # Use dumb-init as the entrypoint
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]

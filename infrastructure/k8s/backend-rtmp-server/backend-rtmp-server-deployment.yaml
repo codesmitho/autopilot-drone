@@ -21,8 +21,6 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 1935
-              name: rtmp-port
-              protocol: TCP
           envFrom:
             - secretRef:
                 name: backend-rtmp-server-secret
