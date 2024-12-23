@@ -13,6 +13,18 @@ services:
     volumes:
       - .:/build
 
+  backend-rtmp-server:
+    container_name: autopilot-drone-backend-rtmp-server
+    build:
+      context: ./backend/rtmp-server
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "1935:1935"
+    volumes:
+      - .:/build
+
   frontend-home:
     container_name: autopilot-drone-frontend-home
     build:
