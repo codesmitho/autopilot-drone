@@ -19,12 +19,16 @@ func main() {
 		log.Panicf("Failed: %+v", err)
 	}
 
+	relayService := NewRelayService()
+
 	srv := rtmp.NewServer(&rtmp.ServerConfig{
 		OnConnect: func(conn net.Conn) (io.ReadWriteCloser, *rtmp.ConnConfig) {
 			l := log.StandardLogger()
 			//l.SetLevel(logrus.DebugLevel)
 
-			h := &Handler{}
+			h := &Handler{
+				relayService: relayService,
+			}
 
 			return conn, &rtmp.ConnConfig{
 				Handler: h,

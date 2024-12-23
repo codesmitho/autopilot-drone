@@ -53,13 +53,19 @@ jobs:
           docker build -f ./backend/webservice/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-backend-webservice:${{ env.VERSION }} ./backend/webservice
           docker push ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-backend-webservice:${{ env.VERSION }}
 
-      # Step 6: Build and Push Home Frontend Docker Image
+      # Step 6: Build and Push RTMP Server Backend Docker Image
+      - name: Build and Push Backend Image
+        run: |
+          docker build -f ./backend/rtmp-server/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-backend-rtmp-server:${{ env.VERSION }} ./backend/rtmp-server
+          docker push ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-backend-rtmp-server:${{ env.VERSION }}
+
+      # Step 7: Build and Push Home Frontend Docker Image
       - name: Build and Push Frontend Image
         run: |
           docker build -f ./frontend/home/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-frontend-home:${{ env.VERSION }} ./frontend/home
           docker push ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-frontend-home:${{ env.VERSION }}
 
-      # Step 7: Build and Push Dashboard Frontend Docker Image
+      # Step 8: Build and Push Dashboard Frontend Docker Image
       - name: Build and Push Frontend Image
         run: |
           docker build -f ./frontend/dashboard/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/autopilot-drone-frontend-dashboard:${{ env.VERSION }} ./frontend/dashboard
@@ -69,7 +75,7 @@ jobs:
       - name: List Built Images
         run: docker images
 
-      # Step 8: Set up kubectl (using kubeconfig secret)
+      # Step 9: Set up kubectl (using kubeconfig secret)
       - name: Set up kubectl using kubeconfig secret
         run: |
           mkdir -p $HOME/.kube  # Create the .kube directory if it doesn't exist
@@ -80,19 +86,25 @@ jobs:
         run: |
           kubectl cluster-info
 
-      # Step 9: Deploy Web Service Backend to Kubernetes (specify the namespace)
+      # Step 10: Deploy Web Service Backend to Kubernetes (specify the namespace)
       - name: Deploy Backend to Kubernetes
         run: |
           kubectl set image deployment/autopilot-drone-backend-webservice autopilot-drone-backend-webservice=${{ secrets.DOCKER_USERNAME }}/autopilot-drone-backend-webservice:${{ env.VERSION }} -n autopilot-drone
           kubectl rollout status deployment/autopilot-drone-backend-webservice -n autopilot-drone
 
-      # Step 10: Deploy Home Frontend to Kubernetes (specify the namespace)
+      # Step 11: Deploy RTMP Server Backend to Kubernetes (specify the namespace)
+      - name: Deploy Backend to Kubernetes
+        run: |
+          kubectl set image deployment/autopilot-drone-backend-rtmp-server autopilot-drone-backend-rtmp-server=${{ secrets.DOCKER_USERNAME }}/autopilot-drone-backend-rtmp-server:${{ env.VERSION }} -n autopilot-drone
+          kubectl rollout status deployment/autopilot-drone-backend-rtmp-server -n autopilot-drone
+
+      # Step 11: Deploy Home Frontend to Kubernetes (specify the namespace)
       - name: Deploy Frontend to Kubernetes
         run: |
           kubectl set image deployment/autopilot-drone-frontend-home autopilot-drone-frontend-home=${{ secrets.DOCKER_USERNAME }}/autopilot-drone-frontend-home:${{ env.VERSION }} -n autopilot-drone
           kubectl rollout status deployment/autopilot-drone-frontend-home -n autopilot-drone
 
-      # Step 11: Deploy Dashboard Frontend to Kubernetes (specify the namespace)
+      # Step 12: Deploy Dashboard Frontend to Kubernetes (specify the namespace)
       - name: Deploy Frontend to Kubernetes
         run: |
           kubectl set image deployment/autopilot-drone-frontend-dashboard autopilot-drone-frontend-dashboard=${{ secrets.DOCKER_USERNAME }}/autopilot-drone-frontend-dashboard:${{ env.VERSION }} -n autopilot-drone
