@@ -3,7 +3,7 @@ import subprocess
 import time
 
 # RTMP Server URL
-rtmp_url = "rtmp://localhost:1935/live/your_stream_key"
+rtmp_url = "rtmp://rtmp.pyxieportal.com:1935/live/your_stream_key"
 
 # OpenCV Video Capture
 cap = cv2.VideoCapture(0)  # Use 0 for default camera
