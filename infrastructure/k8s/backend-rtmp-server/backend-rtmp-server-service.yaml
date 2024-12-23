@@ -7,8 +7,8 @@ spec:
   type: NodePort
   ports:
   - protocol: TCP
-    port: 1953
-    targetPort: 1953
-    nodePort: 31953
+    port: 1935
+    targetPort: 1935
+    nodePort: 31935
   selector:
     app: autopilot-drone-backend-rtmp-server
