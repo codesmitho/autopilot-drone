@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autopilot-drone-backend-stun-server
+  namespace: autopilot-drone
+  labels:
+    app: coturn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: coturn
+  template:
+    metadata:
+      labels:
+        app: coturn
+    spec:
+      containers:
+        - name: coturn
+          image: instrumentisto/coturn:latest
+          ports:
+            - name: stun-tcp
+              containerPort: 3478
+              protocol: TCP
+            - name: stun-udp
+              containerPort: 3478
+              protocol: UDP
+          env:
+            - name: TURN_PORT
+              value: "3478"
+            - name: TURN_REALM
+              value: "pyxieportal.com"
+            - name: TURN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: backend-stun-server-secret
+                  key: turn-username
+            - name: TURN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: backend-stun-server-secret
+                  key: turn-password
+            - name: TURN_EXTRA
+              value: "--no-stdout-log --listening-port=3478 --listening-ip=0.0.0.0 --relay-ip=$(EXTERNAL_IP)"
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          readinessProbe:
+            tcpSocket:
+              port: 3478
+          livenessProbe:
+            tcpSocket:
+              port: 3478
