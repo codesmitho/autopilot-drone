@@ -12,6 +12,7 @@ metadata:
       Access-Control-Allow-Headers: Origin, Content-Type, Accept, Range
       Access-Control-Expose-Headers: Content-Length, Content-Range
       Access-Control-Max-Age: 3600
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: nginx
   rules:
