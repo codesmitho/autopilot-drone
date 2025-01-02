@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: autopilot-drone-backend-rtmp-server
+  namespace: autopilot-drone
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/additional-response-headers: |
+      Access-Control-Allow-Origin: *
+      Access-Control-Allow-Methods: GET, HEAD, OPTIONS
+      Access-Control-Allow-Headers: Origin, Content-Type, Accept, Range
+      Access-Control-Expose-Headers: Content-Length, Content-Range
+      Access-Control-Max-Age: 3600
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: rtmp.pyxieportal.com
+      http:
+        paths:
+          - path: /hls
+            pathType: Prefix
+            backend:
+              service:
+                name: autopilot-drone-backend-rtmp-server
+                port:
+                  number: 80

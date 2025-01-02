@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autopilot-drone-backend-rtmp-server
+  namespace: autopilot-drone
+  labels:
+    app: autopilot-drone-backend-rtmp-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: autopilot-drone-backend-rtmp-server
+  template:
+    metadata:
+      labels:
+        app: autopilot-drone-backend-rtmp-server
+    spec:
+      containers:
+        - name: autopilot-drone-backend-rtmp-server
+          image: docker.io/kasinphatspam/autopilot-drone-backend-rtmp-server:0.0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 1935
+            - containerPort: 80
+          envFrom:
+            - secretRef:
+                name: backend-rtmp-server-secret
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          
+          # Liveness Probe - HTTP Check
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          
+          # Liveness Probe - TCP Check (RTMP Port)
+          readinessProbe:
+            tcpSocket:
+              port: 1935
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+      
+      imagePullSecrets:
+        - name: docker-registry
