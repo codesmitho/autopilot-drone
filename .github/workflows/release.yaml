@@ -92,12 +92,6 @@ jobs:
           kubectl set image deployment/autopilot-drone-backend-webservice autopilot-drone-backend-webservice=${{ secrets.DOCKER_USERNAME }}/autopilot-drone-backend-webservice:${{ env.VERSION }} -n autopilot-drone
           kubectl rollout status deployment/autopilot-drone-backend-webservice -n autopilot-drone
 
-      # Step 11: Deploy RTMP Server Backend to Kubernetes (specify the namespace)
-      - name: Deploy Backend to Kubernetes
-        run: |
-          kubectl set image deployment/autopilot-drone-backend-rtmp-server autopilot-drone-backend-rtmp-server=${{ secrets.DOCKER_USERNAME }}/autopilot-drone-backend-rtmp-server:${{ env.VERSION }} -n autopilot-drone
-          kubectl rollout status deployment/autopilot-drone-backend-rtmp-server -n autopilot-drone
-
       # Step 11: Deploy Home Frontend to Kubernetes (specify the namespace)
       - name: Deploy Frontend to Kubernetes
         run: |
